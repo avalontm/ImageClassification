@@ -63,6 +63,7 @@ namespace ImageClassification
                     // Check if the maximum score is above the confidence threshold
                     if (maxScore >= confidenceThreshold)
                     {
+                        prediction.Probability = maxScore;
                         return prediction;
                     }
                     else
