@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Microsoft.ML;
-using Microsoft.ML.Data;
+﻿using Microsoft.ML;
 using Microsoft.ML.Vision;
-using Tensorflow.Contexts;
 
 namespace ImageClassification
 {
@@ -40,28 +35,28 @@ namespace ImageClassification
 
         public void BuildAndTrainModel()
         {
-            // Create a DataView containing the image paths and labels
+            // Creamos un DataView que contenga las rutas y etiquetas de las imágenes.
             var input = LoadLabeledImagesFromPath(_imagePath);
             var data = _mlContext.Data.LoadFromEnumerable(input);
             data = _mlContext.Data.ShuffleRows(data);
 
-            // Load the images and convert the labels to keys to serve as categorical values
+            // Cargamos las imágenes y convierta las etiquetas en claves para que sirvan como valores categóricos.
             var images = _mlContext.Transforms.Conversion.MapValueToKey(inputColumnName: nameof(Input.Label), outputColumnName: _keyColumnName)
                 .Append(_mlContext.Transforms.LoadRawImageBytes(inputColumnName: nameof(Input.ImagePath), outputColumnName: nameof(Input.Image), imageFolder: _imagePath))
                 .Fit(data).Transform(data);
 
-            // Split the dataset for training and testing
+            // Dividimos el conjunto de datos para entrenamiento y prueba.
             var trainTestData = _mlContext.Data.TrainTestSplit(images, testFraction: 0.2, seed: 1);
             trainData = trainTestData.TrainSet;
             var testData = trainTestData.TestSet;
 
-            // Create an image-classification pipeline and train the model
+            // Creamos un canal de clasificación de imágenes y entrene el modelo.
             var options = new ImageClassificationTrainer.Options()
             {
                 FeatureColumnName = nameof(Input.Image),
                 LabelColumnName = _keyColumnName,
                 ValidationSet = testData,
-                Arch = ImageClassificationTrainer.Architecture.ResnetV2101, // Pretrained DNN
+                Arch = ImageClassificationTrainer.Architecture.ResnetV2101, //DNN previamente entrenado
                 MetricsCallback = (metrics) => Console.WriteLine(metrics),
                 TestOnTrainSet = false
             };
@@ -72,7 +67,7 @@ namespace ImageClassification
             Console.WriteLine("Training the model...");
             var model = pipeline.Fit(trainData);
 
-            // Evaluate the model and show the results
+            // Evaluamos el modelo y mostrar los resultados.
             var predictions = model.Transform(testData);
             var metrics = _mlContext.MulticlassClassification.Evaluate(predictions, labelColumnName: _keyColumnName, predictedLabelColumnName: _predictedLabelColumnName);
 
@@ -107,9 +102,9 @@ namespace ImageClassification
 
         private void SaveModel(ITransformer model)
         {
-            // Save the model
+            // Guardamos el modelo
             Console.WriteLine();
-            Console.WriteLine("Saving the model...");
+            Console.WriteLine("Guardando el modelo...");
             _mlContext.Model.Save(model, trainData.Schema, _modelPath);
         }
     }

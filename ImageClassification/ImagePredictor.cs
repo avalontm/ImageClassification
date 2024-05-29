@@ -9,6 +9,7 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Formats.Jpeg;
+using NumSharp.Utilities;
 
 namespace ImageClassification
 {
@@ -36,13 +37,13 @@ namespace ImageClassification
 
         public Output Predict(string imagePath, float confidenceThreshold)
         {
-            // Show the image
+            // Cargamos la imagen
             var image = Image.Load<Rgba32>(imagePath);
 
-            // Resize the image to the size expected by the model (e.g., 224x224)
+            // CAmbiamos el tamaño de la imagen al tamaño esperado por el modelo (por ejemplo, 224x224)
             image.Mutate(x => x.Resize(224, 224));
 
-            // Convert the image to byte array
+            // Convertir la imagen a una matriz de bytes
             using (var ms = new MemoryStream())
             {
                 image.Save(ms, new JpegEncoder());
@@ -52,15 +53,15 @@ namespace ImageClassification
                     ImagePath = imagePath
                 };
 
-                // Check if the model is loaded and the prediction engine is initialized
+                // Comprobamos si el modelo está cargado y el motor de predicción está inicializado.
                 if (_predictionEngine != null)
                 {
                     var prediction = _predictionEngine.Predict(imageData);
 
-                    // Check the maximum score among classes
+                    // Consultamos la puntuación máxima entre clases.
                     var maxScore = prediction.Score.Max();
 
-                    // Check if the maximum score is above the confidence threshold
+                    // Comprobamos si la puntuación máxima está por encima del umbral de confianza
                     if (maxScore >= confidenceThreshold)
                     {
                         prediction.Probability = maxScore;
@@ -68,13 +69,13 @@ namespace ImageClassification
                     }
                     else
                     {
-                        // If the maximum score is below the confidence threshold, return a default output
+                        // Si la puntuación máxima está por debajo del umbral de confianza, devolverá un resultado predeterminado
                         return new Output { PredictedLabel = "Imagen no identificada con suficiente confianza", Probability = 0.0f };
                     }
                 }
                 else
                 {
-                    // If the prediction engine is not initialized, return a default output
+                    // Si el motor de predicción no está inicializado, devuelve una salida predeterminada
                     return new Output { PredictedLabel = "Modelo no cargado", Probability = 0.0f };
                 }
             }

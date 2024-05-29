@@ -1,11 +1,9 @@
-﻿using System.Diagnostics;
-
-namespace ImageClassification
+﻿namespace ImageClassification
 {
     internal class Program
     {
-        static string imagesFolderPath = "data";
-        static string modelPath = "model.zip";
+        static string imagesFolderPath = "training";
+        static string modelPath = "model_numbers.zip";
         static string? imagePath;
 
         static void Main(string[] args)
@@ -33,12 +31,12 @@ namespace ImageClassification
             Console.WriteLine($"F2) Probar");
             Console.WriteLine($"ESC) Salir");
             Console.WriteLine();
-            
-            ConsoleKey key = Console.ReadKey(true).Key; 
 
-            while(key != ConsoleKey.Escape)
+            ConsoleKey key = Console.ReadKey(true).Key;
+
+            while (key != ConsoleKey.Escape)
             {
-                switch(key)
+                switch (key)
                 {
                     case ConsoleKey.F1:
                         onEntrenar();
@@ -47,7 +45,7 @@ namespace ImageClassification
                         onPredecir();
                         break;
                     default:
-                        Console.WriteLine($"Opcion no valida."); 
+                        Console.WriteLine($"Opcion no valida.");
                         break;
                 }
                 MenuBuild();
@@ -69,14 +67,14 @@ namespace ImageClassification
             Console.Write($"Escribe la ruta de la imagen: ");
             imagePath = Console.ReadLine();
 
-            if(string.IsNullOrEmpty(imagePath) || !File.Exists(imagePath))
+            if (string.IsNullOrEmpty(imagePath) || !File.Exists(imagePath))
             {
                 onPredecir();
                 return;
             }
 
             ImagePredictor predictor = new ImagePredictor(modelPath);
-            var result = predictor.Predict(imagePath, 0.8f);
+            var result = predictor.Predict(imagePath, 0.75f);
             Console.WriteLine();
             Console.WriteLine($"Prediccion: {result.PredictedLabel} | Probabilidad: {result.Probability}");
             Console.WriteLine($"Preciona cualquier tecla para continuar...");
