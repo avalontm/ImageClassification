@@ -34,7 +34,7 @@ namespace ImageClassification
             _predictionEngine = _mlContext.Model.CreatePredictionEngine<Input, Output>(_model);
         }
 
-        public Output Predict(string imagePath)
+        public Output Predict(string imagePath, float confidenceThreshold)
         {
             // Show the image
             var image = Image.Load<Rgba32>(imagePath);
@@ -51,9 +51,31 @@ namespace ImageClassification
                     Image = ms.ToArray(),
                     ImagePath = imagePath
                 };
-                var prediction = _predictionEngine.Predict(imageData);
 
-                return prediction;
+                // Check if the model is loaded and the prediction engine is initialized
+                if (_predictionEngine != null)
+                {
+                    var prediction = _predictionEngine.Predict(imageData);
+
+                    // Check the maximum score among classes
+                    var maxScore = prediction.Score.Max();
+
+                    // Check if the maximum score is above the confidence threshold
+                    if (maxScore >= confidenceThreshold)
+                    {
+                        return prediction;
+                    }
+                    else
+                    {
+                        // If the maximum score is below the confidence threshold, return a default output
+                        return new Output { PredictedLabel = "Imagen no identificada con suficiente confianza", Probability = 0.0f };
+                    }
+                }
+                else
+                {
+                    // If the prediction engine is not initialized, return a default output
+                    return new Output { PredictedLabel = "Modelo no cargado", Probability = 0.0f };
+                }
             }
         }
     }

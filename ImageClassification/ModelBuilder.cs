@@ -19,6 +19,7 @@ namespace ImageClassification
     {
         public float[]? Score;
         public string? PredictedLabel;
+        public float Probability;
     }
 
     public class ModelBuilder

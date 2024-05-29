@@ -76,7 +76,7 @@ namespace ImageClassification
             }
 
             ImagePredictor predictor = new ImagePredictor(modelPath);
-            var result = predictor.Predict(imagePath);
+            var result = predictor.Predict(imagePath, 0.8f);
             Console.WriteLine();
             Console.WriteLine($"Prediccion: {result.PredictedLabel}");
             Console.WriteLine($"Preciona cualquier tecla para continuar...");
