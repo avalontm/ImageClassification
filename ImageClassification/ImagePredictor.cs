@@ -35,13 +35,13 @@ namespace ImageClassification
             _predictionEngine = _mlContext.Model.CreatePredictionEngine<Input, Output>(_model);
         }
 
-        public Output Predict(string imagePath, float confidenceThreshold)
+        public Output Predict(string imagePath, float confidenceThreshold, int size = 224)
         {
             // Cargamos la imagen
             var image = Image.Load<Rgba32>(imagePath);
 
             // CAmbiamos el tamaño de la imagen al tamaño esperado por el modelo (por ejemplo, 224x224)
-            image.Mutate(x => x.Resize(224, 224));
+            image.Mutate(x => x.Resize(size, size));
 
             // Convertir la imagen a una matriz de bytes
             using (var ms = new MemoryStream())
