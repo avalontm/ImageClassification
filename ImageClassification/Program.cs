@@ -2,7 +2,7 @@
 {
     internal class Program
     {
-        static string imagesFolderPath = "training";
+        static string imagesFolderPath = "testing";
         static string modelPath = "model_numbers.zip";
         static string? imagePath;
 
@@ -14,9 +14,8 @@
         static void TitleBuild()
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"Ejercicio de machine learning");
+            Console.WriteLine($"Ejercicio de machine learning - Clasificaion de imagenes");
             Console.ResetColor();
-            Console.WriteLine($"Este ejemplo identifica comida: hotdog, pizza y sushi.");
         }
 
         static void MenuBuild()
